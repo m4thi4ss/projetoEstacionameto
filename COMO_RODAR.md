@@ -37,6 +37,18 @@ dotnet run
 - Swagger: http://localhost:5000/swagger  
 - O banco SQLite (`estacionamento.db`) é criado automaticamente na primeira execução.
 
+**Aviso para quem for rodar o projeto (ex.: entrevistador):** A chave JWT não está no repositório por segurança. Para o login funcionar, crie o arquivo `Backend/EstacionamentoAPI/appsettings.Development.local.json` (ele não sobe no Git) com o conteúdo abaixo. Sem esse arquivo, a API pode rejeitar o login com erro 401.
+
+```json
+{
+  "Jwt": {
+    "Key": "ChaveSecretaSuperSegura@Estacionamento2026!MinhaChaveJWT",
+    "Issuer": "EstacionamentoAPI",
+    "Audience": "EstacionamentoApp"
+  }
+}
+```
+
 ---
 
 ## 3. Terminal 2 – Frontend (Angular)
@@ -83,7 +95,8 @@ O **Backend não está rodando** ou não está em `http://localhost:5000`.
 **Solução:** Use Node.js **18 LTS** ou **20 LTS**. Evite Node 15 ou 16. Reinstale as dependências: apague a pasta `node_modules` e o arquivo `package-lock.json` dentro de `Frontend/estacionamento-app`, depois rode `npm install` de novo.
 
 ### Tela de login não carrega ou dá erro 401
-A API está fora do ar ou em outra porta. Confirme que no Terminal 1 está rodando `dotnet run` e que a URL da API no frontend é `http://localhost:5000` (em `Frontend/estacionamento-app/src/app/services/api.service.ts` a variável `baseUrl` deve ser essa).
+A API está fora do ar ou em outra porta. Confirme que no Terminal 1 está rodando `dotnet run` e que a URL da API no frontend é `http://localhost:5000` (em `Frontend/estacionamento-app/src/app/services/api.service.ts` a variável `baseUrl` deve ser essa).  
+**Ou:** a chave JWT não está configurada. Crie o arquivo `Backend/EstacionamentoAPI/appsettings.Development.local.json` com a seção `Jwt` (veja o aviso na seção 2 acima).
 
 ---
 
