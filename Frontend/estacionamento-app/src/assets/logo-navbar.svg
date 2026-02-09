@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <!-- Círculo azul de fundo -->
+  <circle cx="25" cy="25" r="20" fill="#2196F3"/>
+  
+  <!-- Letra P branca -->
+  <text x="25" y="38" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">P</text>
+  
+  <!-- Texto "Sistema de Estacionamento" -->
+  <text x="55" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="600" fill="#333">Sistema de</text>
+  <text x="55" y="42" font-family="Arial, sans-serif" font-size="18" font-weight="600" fill="#333">Estacionamento</text>
+</svg>

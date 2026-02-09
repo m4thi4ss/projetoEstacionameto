@@ -1,0 +1,150 @@
+# ===============================
+# Sistema operacional
+# ===============================
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===============================
+# Backend - .NET / ASP.NET Core
+# ===============================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Oo]ut/
+[Tt]est[Rr]esult*/
+*.vspscc
+*.vssscc
+*.pidb
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+nupkg/
+*.nupkg
+*.snupkg
+**/packages/
+!**/packages/build/
+
+# Visual Studio
+.vs/
+*.rsuser
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific (não versionar override local de configuração)
+appsettings.*.local.json
+**/appsettings.Development.local.json
+**/appsettings.Production.local.json
+secrets.json
+
+# Banco SQLite (dados locais - cada dev tem o seu)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+estacionamento.db
+**/estacionamento.db
+
+# Logs da aplicação
+logs/
+*.log
+**/logs/
+
+# ===============================
+# Frontend - Node / Angular
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn-integrity
+.pnp.*
+**/node_modules/
+
+# Build e cache do Angular
+.angular/
+dist/
+tmp/
+out-tsc/
+build/
+*.ngfactory.ts
+*.ngsummary.json
+bazel-out/
+
+# Coverage e testes (opcional manter no repo; descomente se não quiser subir)
+# /coverage/
+# .nyc_output/
+# *.lcov
+
+# Sass
+.sass-cache/
+*.css.map
+
+# TypeScript (apenas arquivos gerados, não fonte)
+# *.js.map  # pode manter para debug; descomente se não quiser
+connect.lock
+libpeerconnection.log
+testem.log
+/typings
+
+# ===============================
+# IDEs e editores
+# ===============================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ===============================
+# Segurança e ambiente
+# ===============================
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.pfx
+
+# ===============================
+# Outros
+# ===============================
+*.swp
+*.*~
+*.pyc
+*.orig
+.cache/

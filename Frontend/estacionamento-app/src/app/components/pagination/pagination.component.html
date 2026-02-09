@@ -1,0 +1,64 @@
+<div class="pagination-container" *ngIf="totalPages > 0">
+  <div class="pagination-info">
+    <span>
+      Mostrando <strong>{{ getStartItem() }}</strong> - <strong>{{ getEndItem() }}</strong> 
+      de <strong>{{ totalCount }}</strong> registros
+    </span>
+  </div>
+
+  <div class="pagination-controls">
+    <div class="page-size-selector">
+      <label for="pageSize">Itens por página:</label>
+      <select 
+        id="pageSize" 
+        [(ngModel)]="selectedPageSize"
+        (ngModelChange)="onPageSizeChange()"
+        class="page-size-select">
+        <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+      </select>
+    </div>
+
+    <div class="page-navigator">
+      <button 
+        class="btn-page" 
+        [disabled]="!hasPreviousPage"
+        (click)="onPageChange(1)"
+        title="Primeira página">
+        <mat-icon>first_page</mat-icon>
+      </button>
+
+      <button 
+        class="btn-page" 
+        [disabled]="!hasPreviousPage"
+        (click)="onPageChange(currentPage - 1)"
+        title="Página anterior">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <button 
+        *ngFor="let page of getPages()"
+        class="btn-page"
+        [class.active]="page === currentPage"
+        [disabled]="page === -1"
+        (click)="page > 0 && onPageChange(page)">
+        {{ page === -1 ? '...' : page }}
+      </button>
+
+      <button 
+        class="btn-page" 
+        [disabled]="!hasNextPage"
+        (click)="onPageChange(currentPage + 1)"
+        title="Próxima página">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+
+      <button 
+        class="btn-page" 
+        [disabled]="!hasNextPage"
+        (click)="onPageChange(totalPages)"
+        title="Última página">
+        <mat-icon>last_page</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

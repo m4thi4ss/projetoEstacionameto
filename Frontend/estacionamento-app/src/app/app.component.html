@@ -1,0 +1,64 @@
+<div class="app-container" *ngIf="authService.isLoggedIn">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <img src="assets/logo-navbar-white.svg" alt="Logo" class="logo-icon">
+      <span class="app-title">Sistema de Estacionamento</span>
+    </div>
+    <ul class="navbar-menu">
+      <li>
+        <a routerLink="/patio" routerLinkActive="active">
+          <mat-icon>local_parking</mat-icon>
+          <span>Pátio</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/veiculos" routerLinkActive="active">
+          <mat-icon>directions_car</mat-icon>
+          <span>Veículos</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/historico" routerLinkActive="active">
+          <mat-icon>history</mat-icon>
+          <span>Histórico</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/relatorios" routerLinkActive="active">
+          <mat-icon>assessment</mat-icon>
+          <span>Relatórios</span>
+        </a>
+      </li>
+      <li *ngIf="authService.isAdmin">
+        <a routerLink="/usuarios" routerLinkActive="active">
+          <mat-icon>people</mat-icon>
+          <span>Usuários</span>
+        </a>
+      </li>
+    </ul>
+    <div class="navbar-user">
+      <span class="user-info">
+        <mat-icon class="user-icon">person</mat-icon>
+        <span class="user-name">{{ authService.currentUserValue?.nome }}</span>
+        <span class="user-role">({{ authService.currentUserValue?.perfil }})</span>
+      </span>
+      <button (click)="logout()" class="btn-logout">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Sair</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <app-toast></app-toast>
+    <app-dialog></app-dialog>
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 Sistema de Estacionamento - Brasil & Argentina</p>
+  </footer>
+</div>
+
+<router-outlet *ngIf="!authService.isLoggedIn"></router-outlet>
+

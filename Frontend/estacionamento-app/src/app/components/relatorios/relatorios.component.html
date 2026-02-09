@@ -1,0 +1,167 @@
+<div class="container">
+  <h1><mat-icon class="title-icon">assessment</mat-icon> Relatórios</h1>
+
+  <div class="tabs">
+    <button 
+      [class.active]="relatorioAtivo === 'faturamento'"
+      (click)="selecionarRelatorio('faturamento')"
+      class="tab-button">
+      Faturamento Diário
+    </button>
+    <button 
+      [class.active]="relatorioAtivo === 'topVeiculos'"
+      (click)="selecionarRelatorio('topVeiculos')"
+      class="tab-button">
+      Top 10 Veículos
+    </button>
+    <button 
+      [class.active]="relatorioAtivo === 'ocupacao'"
+      (click)="selecionarRelatorio('ocupacao')"
+      class="tab-button">
+      Ocupação por Hora
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Carregando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Relatório de Faturamento -->
+  <div *ngIf="relatorioAtivo === 'faturamento' && !loading" class="relatorio-section">
+    <div class="info-box" *ngIf="faturamentos.length === 0 && !error">
+      <p>ℹ️ Para gerar este relatório, é necessário ter registrado saídas de veículos.</p>
+    </div>
+    
+    <div class="filter-section">
+      <label for="diasFaturamento">Últimos:</label>
+      <select id="diasFaturamento" [(ngModel)]="diasFaturamento" (change)="carregarFaturamento()" class="input-field">
+        <option [value]="7">7 dias</option>
+        <option [value]="15">15 dias</option>
+        <option [value]="30">30 dias</option>
+        <option [value]="60">60 dias</option>
+        <option [value]="90">90 dias</option>
+      </select>
+    </div>
+
+    <div *ngIf="faturamentos.length > 0">
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h3>Total Faturado</h3>
+          <p class="value">R$ {{ getTotalFaturamento() | number: '1.2-2' }}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Total de Saídas</h3>
+          <p class="value">{{ getTotalSaidas() }}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Valor Total</th>
+            <th>Quantidade de Saídas</th>
+            <th>Ticket Médio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of faturamentos">
+            <td>{{ f.data | date: 'dd/MM/yyyy' }}</td>
+            <td>R$ {{ f.valorTotal | number: '1.2-2' }}</td>
+            <td>{{ f.quantidadeSaidas }}</td>
+            <td>R$ {{ (f.valorTotal / f.quantidadeSaidas) | number: '1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="faturamentos.length === 0" class="empty-state">
+      <p>Nenhum faturamento no período</p>
+    </div>
+  </div>
+
+  <!-- Relatório Top Veículos -->
+  <div *ngIf="relatorioAtivo === 'topVeiculos' && !loading" class="relatorio-section">
+    <div class="filter-section">
+      <div class="date-filters">
+        <div class="form-group">
+          <label for="dataInicioTop">Data Início:</label>
+          <input type="date" id="dataInicioTop" [(ngModel)]="dataInicioTop" class="input-field">
+        </div>
+        <div class="form-group">
+          <label for="dataFimTop">Data Fim:</label>
+          <input type="date" id="dataFimTop" [(ngModel)]="dataFimTop" class="input-field">
+        </div>
+        <button (click)="carregarTopVeiculos()" class="btn btn-primary">Consultar</button>
+      </div>
+    </div>
+
+    <table *ngIf="topVeiculos.length > 0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Placa</th>
+          <th>Modelo</th>
+          <th>Sessões</th>
+          <th>Total de Horas</th>
+          <th>Tempo Formatado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of topVeiculos; let i = index">
+          <td>{{ i + 1 }}º</td>
+          <td><strong>{{ v.placa }}</strong></td>
+          <td>{{ v.modelo || '-' }}</td>
+          <td>{{ v.quantidadeSessoes }}</td>
+          <td>{{ v.totalHorasEstacionadas | number: '1.2-2' }}h</td>
+          <td>{{ v.tempoFormatado }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="topVeiculos.length === 0" class="empty-state">
+      <p>Nenhum veículo encontrado no período</p>
+    </div>
+  </div>
+
+  <!-- Relatório Ocupação -->
+  <div *ngIf="relatorioAtivo === 'ocupacao' && !loading" class="relatorio-section">
+    <div class="info-box" *ngIf="ocupacoes.length === 0 && !error">
+      <p>ℹ️ Este relatório mostra quantos veículos estavam no pátio em cada hora do dia.</p>
+      <p><strong>Dica:</strong> Selecione o período que inclui as datas das suas sessões (hoje é 07/02/2026).</p>
+    </div>
+    
+    <div class="filter-section">
+      <div class="date-filters">
+        <div class="form-group">
+          <label for="dataInicioOcupacao">Data Início:</label>
+          <input type="date" id="dataInicioOcupacao" [(ngModel)]="dataInicioOcupacao" class="input-field">
+        </div>
+        <div class="form-group">
+          <label for="dataFimOcupacao">Data Fim:</label>
+          <input type="date" id="dataFimOcupacao" [(ngModel)]="dataFimOcupacao" class="input-field">
+        </div>
+        <button (click)="carregarOcupacao()" class="btn btn-primary">Consultar</button>
+      </div>
+    </div>
+
+    <div *ngIf="ocupacoes.length > 0" class="ocupacao-grid">
+      <div *ngFor="let o of ocupacoes" 
+           class="ocupacao-card"
+           [class.ocupacao-card-ativa]="o.quantidadeVeiculos > 0">
+        <div class="ocupacao-header">
+          {{ o.dataHora | date: 'dd/MM/yyyy' }}
+        </div>
+        <div class="ocupacao-hora">
+          {{ o.dataHora | date: 'HH:mm' }}
+        </div>
+        <div class="ocupacao-valor" [class.ocupacao-destaque]="o.quantidadeVeiculos > 0">
+          {{ o.quantidadeVeiculos }} veículo(s)
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="ocupacoes.length === 0" class="empty-state">
+      <p>Nenhuma ocupação registrada no período</p>
+    </div>
+  </div>
+</div>

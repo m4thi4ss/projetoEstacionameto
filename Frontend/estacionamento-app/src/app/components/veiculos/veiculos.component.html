@@ -1,0 +1,219 @@
+<div class="container">
+  <div class="header">
+    <h1><mat-icon class="title-icon">directions_car</mat-icon> Gerenciamento de Veículos</h1>
+    <div class="header-actions">
+      <button (click)="toggleFilters()" class="btn btn-secondary">
+        <mat-icon>filter_list</mat-icon> {{ showFilters ? 'Ocultar' : 'Mostrar' }} Filtros
+      </button>
+      <button (click)="novoVeiculo()" class="btn btn-primary" *ngIf="!showForm">
+        <mat-icon>add</mat-icon> Novo Veículo
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-section" *ngIf="showFilters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="filtroPlaca">Placa:</label>
+        <input 
+          type="text" 
+          id="filtroPlaca"
+          [(ngModel)]="filtros.placa" 
+          placeholder="Ex: ABC-1234"
+          class="input-field">
+      </div>
+
+      <div class="filter-group">
+        <label for="filtroTipo">Tipo:</label>
+        <select 
+          id="filtroTipo"
+          [(ngModel)]="filtros.tipo" 
+          class="input-field">
+          <option *ngFor="let tipo of tiposVeiculo" [ngValue]="tipo.valor">
+            {{ tipo.nome }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="orderBy">Ordenar por:</label>
+        <select 
+          id="orderBy"
+          [(ngModel)]="filtros.orderBy" 
+          class="input-field">
+          <option *ngFor="let opcao of opcoesOrdenacao" [value]="opcao.valor">
+            {{ opcao.nome }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="descending">Ordem:</label>
+        <select 
+          id="descending"
+          [(ngModel)]="filtros.descending" 
+          class="input-field">
+          <option [ngValue]="false">Crescente</option>
+          <option [ngValue]="true">Decrescente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button (click)="aplicarFiltros()" class="btn btn-primary">
+        Aplicar Filtros
+      </button>
+      <button (click)="limparFiltros()" class="btn btn-secondary">
+        Limpar Filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulário -->
+  <div *ngIf="showForm" class="form-section">
+    <h2>{{ editando ? 'Editar Veículo' : 'Novo Veículo' }}</h2>
+    <form (ngSubmit)="salvarVeiculo()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="placa">Placa *</label>
+          <input 
+            type="text" 
+            id="placa"
+            [(ngModel)]="veiculo.placa" 
+            name="placa"
+            [disabled]="editando"
+            class="input-field"
+            required
+            placeholder="ABC-1234"
+            maxlength="10">
+        </div>
+
+        <div class="form-group">
+          <label for="modelo">Modelo</label>
+          <input 
+            type="text" 
+            id="modelo"
+            [(ngModel)]="veiculo.modelo" 
+            name="modelo"
+            class="input-field"
+            placeholder="Ex: Honda Civic"
+            maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label for="cor">Cor</label>
+          <input 
+            type="text" 
+            id="cor"
+            [(ngModel)]="veiculo.cor" 
+            name="cor"
+            class="input-field"
+            placeholder="Ex: Preto"
+            maxlength="50">
+        </div>
+
+        <div class="form-group">
+          <label for="tipo">Tipo *</label>
+          <select 
+            id="tipo"
+            [(ngModel)]="veiculo.tipo" 
+            name="tipo"
+            class="input-field"
+            required>
+            <option *ngFor="let tipo of tiposVeiculo.slice(1)" [ngValue]="tipo.valor">
+              {{ tipo.nome }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success">
+          {{ editando ? 'Atualizar' : 'Cadastrar' }}
+        </button>
+        <button type="button" (click)="cancelar()" class="btn btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading" class="loading">Carregando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Lista de Veículos -->
+  <div class="table-section" *ngIf="!loading && pagedResult.items.length > 0">
+    <div class="table-header">
+      <h2>Veículos Cadastrados</h2>
+      <span class="badge">{{ pagedResult.totalCount }} veículo(s)</span>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Cor</th>
+            <th>Tipo</th>
+            <th>Data Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of pagedResult.items">
+            <td><strong>{{ v.placa }}</strong></td>
+            <td>{{ v.modelo || '-' }}</td>
+            <td>{{ v.cor || '-' }}</td>
+            <td>
+              <span class="tipo-badge tipo-badge-icon" [attr.data-tipo]="getTipoNome(v.tipo)" [matTooltip]="getTipoNome(v.tipo)">
+                <mat-icon>{{ getTipoIcon(v.tipo) }}</mat-icon>
+              </span>
+            </td>
+            <td>{{ v.dataCadastro | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <div class="action-buttons">
+                <button 
+                  (click)="editarVeiculo(v)" 
+                  class="btn btn-small btn-warning" 
+                  title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button 
+                  (click)="deletarVeiculo(v.id!, v.placa)" 
+                  class="btn btn-small btn-danger" 
+                  title="Excluir">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button 
+                  (click)="registrarEntrada(v.placa)" 
+                  class="btn btn-small btn-success" 
+                  title="Registrar Entrada">
+                  <mat-icon>login</mat-icon> Entrada
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginação -->
+    <app-pagination
+      [currentPage]="pagedResult.pageNumber"
+      [totalPages]="pagedResult.totalPages"
+      [pageSize]="pagedResult.pageSize"
+      [totalCount]="pagedResult.totalCount"
+      [hasPreviousPage]="pagedResult.hasPreviousPage"
+      [hasNextPage]="pagedResult.hasNextPage"
+      (pageChanged)="onPageChanged($event)"
+      (pageSizeChanged)="onPageSizeChanged($event)">
+    </app-pagination>
+  </div>
+
+  <div *ngIf="!loading && pagedResult.items.length === 0" class="empty-state">
+    <p><mat-icon class="empty-icon">directions_car</mat-icon> Nenhum veículo cadastrado</p>
+    <button (click)="novoVeiculo()" class="btn btn-primary"><mat-icon>add</mat-icon> Cadastrar primeiro veículo</button>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="container">
+  <h1><img src="assets/logo-patio.svg" alt="P" class="title-logo"> Pátio Agora</h1>
+
+  <div class="filter-section">
+    <div class="filter-group">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroPlaca" 
+          (keyup.enter)="filtrar()"
+          placeholder="Buscar por placa (Ex: ABC-1234)"
+          class="input-field">
+      </div>
+      <button (click)="filtrar()" class="btn btn-primary" [disabled]="loading">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+      <button (click)="filtroPlaca = ''; carregarPatio()" class="btn btn-secondary" [disabled]="loading">
+        <mat-icon>refresh</mat-icon> Limpar
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <app-loading *ngIf="loading" message="Carregando veículos no pátio..."></app-loading>
+
+  <!-- Erro State -->
+  <div *ngIf="error && !loading" class="error-banner">
+    <mat-icon class="error-icon">warning</mat-icon>
+    <span>{{ error }}</span>
+    <button (click)="carregarPatio()" class="btn-retry">
+      <mat-icon>refresh</mat-icon> Tentar novamente
+    </button>
+  </div>
+
+  <!-- Lista de Veículos -->
+  <div class="veiculos-grid" *ngIf="!loading && !error && veiculos.length > 0">
+    <div *ngFor="let veiculo of veiculos" class="veiculo-card">
+      <div class="card-header">
+        <h3>{{ veiculo.placa }}</h3>
+        <span class="tipo-badge" [ngClass]="'badge-' + veiculo.tipo.toLowerCase()" [title]="veiculo.tipo">
+          <mat-icon class="tipo-icon">{{ getTipoIcon(veiculo.tipo) }}</mat-icon>
+        </span>
+      </div>
+      <div class="card-body">
+        <p>
+          <mat-icon class="detail-icon">{{ getTipoIcon(veiculo.tipo) }}</mat-icon>
+          <strong>Modelo:</strong> {{ veiculo.modelo || 'N/A' }}
+        </p>
+        <p><mat-icon class="detail-icon">palette</mat-icon> <strong>Cor:</strong> {{ veiculo.cor || 'N/A' }}</p>
+        <p><mat-icon class="detail-icon">event</mat-icon> <strong>Entrada:</strong> {{ veiculo.dataHoraEntrada | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <p><mat-icon class="detail-icon">schedule</mat-icon> <strong>Tempo:</strong> {{ veiculo.tempoEstacionado }}</p>
+        <p class="valor"><mat-icon class="detail-icon">payments</mat-icon> <strong>Valor Atual:</strong> R$ {{ veiculo.valorAtual | number: '1.2-2' }}</p>
+      </div>
+      <div class="card-footer">
+        <button (click)="calcularSaida(veiculo)" class="btn btn-danger" [disabled]="loading">
+          <mat-icon>exit_to_app</mat-icon> Registrar Saída
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <app-empty-state 
+    *ngIf="!loading && !error && veiculos.length === 0"
+    icon="local_parking"
+    title="Pátio Vazio"
+    message="Não há veículos estacionados no momento. Registre uma entrada na tela de Veículos.">
+  </app-empty-state>
+</div>
+
+<!-- Modal de Confirmação de Saída -->
+<div *ngIf="showConfirmModal" class="modal-overlay" (click)="cancelarSaida()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2><mat-icon class="modal-icon">exit_to_app</mat-icon> Confirmar Saída</h2>
+    <div *ngIf="saidaCalculada" class="saida-info">
+      <p><strong>Placa:</strong> {{ saidaCalculada.placa }}</p>
+      <p><strong>Entrada:</strong> {{ saidaCalculada.dataHoraEntrada | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Saída:</strong> {{ saidaCalculada.dataHoraSaida | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Tempo Estacionado:</strong> {{ saidaCalculada.tempoEstacionado }}</p>
+      <p class="valor-total"><strong>Valor a Cobrar:</strong> R$ {{ saidaCalculada.valorCobrado | number: '1.2-2' }}</p>
+    </div>
+    <div class="modal-actions">
+      <button (click)="confirmarSaida()" class="btn btn-success">
+        <mat-icon>check</mat-icon> Confirmar
+      </button>
+      <button (click)="cancelarSaida()" class="btn btn-secondary">
+        <mat-icon>close</mat-icon> Cancelar
+      </button>
+    </div>
+  </div>
+</div>
